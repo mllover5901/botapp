@@ -1,3 +1,10 @@
+# -*- coding: utf-8 -*-
+"""
+Created on Wed Mar 10 15:24:36 2021
+
+@author: nibed
+"""
+
 from wit import Wit 
 from gnewsclient import gnewsclient
 
@@ -7,7 +14,7 @@ client = Wit(access_token = access_token)
 
 def wit_response(message_text):
 	resp = client.message(message_text)
-	categories = {'newstype':None, 'location':None}
+	categories = {'newstype:newstype':None, 'wit$location:location':None}
 
 	
 	entities = list(resp['entities'])
@@ -21,11 +28,11 @@ def get_news_elements(categories):
 	news_client = gnewsclient()
 	news_client.query = ''
 
-	if categories['newstype'] != None:
-		news_client.query += categories['newstype'] + ' '
+	if categories['newstype:newstype'] != None:
+		news_client.query += categories['newstype:newstype'] + ' '
 
-	if categories['location'] != None:
-		news_client.query += categories['location']
+	if categories['wit$location:location'] != None:
+		news_client.query += categories['wit$location:location']
 
 	news_items = news_client.get_news()
 
