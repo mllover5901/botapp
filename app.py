@@ -1,3 +1,4 @@
+
 import os, sys
 from flask import Flask, request
 from utils import wit_response, get_news_elements
