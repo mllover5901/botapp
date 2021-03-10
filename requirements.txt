@@ -16,3 +16,5 @@ urllib3==1.26.3
 wcwidth==0.2.5
 Werkzeug==1.0.1
 wit==6.0.0
+fuzzywuzzy==0.15.0
+gnewsclient==1.0.2
