@@ -1,7 +1,7 @@
 
 import os, sys
 from flask import Flask, request
-from utils import wit_response, get_news_elements
+from utils import wit_response
 from pymessenger import Bot
 
 app = Flask("My echo Bot")
