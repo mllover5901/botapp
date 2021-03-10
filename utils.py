@@ -17,17 +17,32 @@ def wit_response(message_text):
     value = None
     try:
       val=[]
-      
+      categories ={'weather:weather':None,'wit$location:location':None}
       entity = list(resp['entities'])
       for en in entity:
-        
-        value = resp['entities'][en][0]['value']
-        val.append(value)
+        categories[en] =resp['entities'][en][0]['value']
+      
     except:
         pass
-    return (entity,val)
+    return categories
 
-#message_text ="show me the rainfall in Paris"
+from pyowm import OWM
 
-#print(wit_response(message_text))
+def get_news_elements(categories):
 
+    owm = pyowm.OWM('43293d2e801bcd8a23955fad181b5d54')
+    mgr = owm.weather_manager()
+
+    observation = mgr.weather_at_place(categories['wit$location:location'])
+    w = observation.weather
+    if categories['weather:weather']=='temperature':
+        return w.temperature('celsius')['temp']
+    elif categories['weather:weather']=='humidity':
+        return w.humidity
+    elif categories['weather:weather'] == 'rainfall':
+        return w.rain
+
+
+#message_text ="show me rains in Paris"
+
+#print(get_news_elements(wit_response(message_text)))
