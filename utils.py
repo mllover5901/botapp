@@ -1,48 +1,46 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Wed Mar 10 09:58:09 2021
+from wit import Wit 
+from gnewsclient import gnewsclient
 
-@author: nibed
-"""
-
-from wit import Wit
-
-access_token = "PZCGLHDPZB2GKN4A6VMORDT6KX6QR74M"
+access_token = "server_access_token_here"
 
 client = Wit(access_token = access_token)
 
 def wit_response(message_text):
-    resp = client.message(message_text)
-    entity=None
-    value = None
-    try:
-      val=[]
-      categories ={'weather:weather':None,'wit$location:location':None}
-      entity = list(resp['entities'])
-      for en in entity:
-        categories[en] =resp['entities'][en][0]['value']
-      
-    except:
-        pass
-    return categories
+	resp = client.message(message_text)
+	categories = {'newstype':None, 'location':None}
 
-from pyowm import OWM
+	
+	entities = list(resp['entities'])
+	for entity in entities:
+		categories[entity] = resp['entities'][entity][0]['value']
+	
+	return categories
+
 
 def get_news_elements(categories):
+	news_client = gnewsclient()
+	news_client.query = ''
 
-    owm = pyowm.OWM('43293d2e801bcd8a23955fad181b5d54')
-    mgr = owm.weather_manager()
+	if categories['newstype'] != None:
+		news_client.query += categories['newstype'] + ' '
 
-    observation = mgr.weather_at_place(categories['wit$location:location'])
-    w = observation.weather
-    if categories['weather:weather']=='temperature':
-        return w.temperature('celsius')['temp']
-    elif categories['weather:weather']=='humidity':
-        return w.humidity
-    elif categories['weather:weather'] == 'rainfall':
-        return w.rain
+	if categories['location'] != None:
+		news_client.query += categories['location']
 
+	news_items = news_client.get_news()
 
-#message_text ="show me rains in Paris"
+	elements = []
 
-#print(get_news_elements(wit_response(message_text)))
+	for item in news_items:
+		element = {
+					'title': item['title'],
+					'buttons': [{
+								'type': 'web_url',
+								'title': "Read more",
+								'url': item['link']
+					}],
+					'image_url': item['img']		
+		}
+		elements.append(element)
+
+	return elements
